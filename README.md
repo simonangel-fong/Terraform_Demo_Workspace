@@ -26,6 +26,11 @@ Resource names are tagged automatically as `<project>_<workspace>_<resource>`.
 resource "aws_instance" "app" {
   count         = terraform.workspace == "prod" ? 3 : 1
   instance_type = terraform.workspace == "prod" ? "t2.large" : "t2.micro"
+
+  tags = {
+    Name        = format("%s_%s_ec2_%02d", var.project_name, terraform.workspace, count.index)
+    Environment = terraform.workspace
+  }
 }
 ```
 
