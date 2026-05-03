@@ -1,5 +1,8 @@
+# ##############################
+# VPC
+# ##############################
 resource "aws_vpc" "main" {
-  cidr_block           = local.current_config.cidr_block
+  cidr_block           = var.vpc_cidr_block
   enable_dns_support   = true
   enable_dns_hostnames = true
 
@@ -11,7 +14,7 @@ resource "aws_vpc" "main" {
 
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = local.current_config.subnet_cidr_block
+  cidr_block        = var.subnet_cidr_block
   availability_zone = var.availability_zone
 
   tags = {
@@ -20,11 +23,14 @@ resource "aws_subnet" "private" {
   }
 }
 
+# ##############################
+# ec2
+# ##############################
 resource "aws_instance" "app" {
-  count = local.current_config.instance_count
+  count = terraform.workspace == "prod" ? 3 : 1
 
   ami           = var.ami_id
-  instance_type = local.current_config.instance_type
+  instance_type = terraform.workspace == "prod" ? "t2.large" : "t2.micro"
   subnet_id     = aws_subnet.private.id
 
   tags = {

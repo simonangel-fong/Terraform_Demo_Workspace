@@ -15,3 +15,15 @@ variable "availability_zone" {
   type        = string
   default     = "ca-central-1a"
 }
+
+variable "vpc_cidr_block" {
+  description = "VPC cidr block"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "subnet_cidr_block" {
+  description = "Subnet cidr block"
+  type        = string
+  default     = "10.0.1.0/24"
+}
