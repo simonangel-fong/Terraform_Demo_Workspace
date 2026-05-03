@@ -1,100 +1,60 @@
-# Terraform_Demo_Workspace
+# Terraform — Workspace Demo
 
-this is a demo project to learn terraform workspace
+> Demonstrates Terraform workspaces by provisioning environment-specific AWS infrastructure from a single configuration. Switching workspaces changes the resource count and instance type without touching any code.
 
-## Key Steps
+**Stack:** AWS (ca-central-1) · VPC + private subnet + EC2 · local backend
 
-### Initialize Project
+---
+
+## Workspace
+
+- `Terraform workspace`
+  - a feature that manages **multiple separate state** files **using a single Terraform configuration**.
+
+- Workspace in projecg
+
+|               | `dev`    | `prod`   |
+| ------------- | -------- | -------- |
+| EC2 count     | 1        | 3        |
+| Instance type | t2.micro | t2.large |
+
+Resource names are tagged automatically as `<project>_<workspace>_<resource>`.
+
+## Key pattern
+
+```hcl
+resource "aws_instance" "app" {
+  count         = terraform.workspace == "prod" ? 3 : 1
+  instance_type = terraform.workspace == "prod" ? "t2.large" : "t2.micro"
+}
+```
+
+## Quick start
 
 ```sh
 cd infra
 terraform init
-```
-
-### Dev Workspace
-
-- Create dev workspace
-
-```sh
-# create workspace
 terraform workspace new dev
-# Created and switched to workspace "dev"!
-
-# You're now on a new, empty workspace. Workspaces isolate their state,
-# so if you run "terraform plan" Terraform will not see any existing state
-# for this configuration.
-
-terraform workspace show
-# dev
-
-terraform workspace list
-#   default
-# * dev
-```
-
-- Apply
-
-```sh
-terraform fmt && terraform validate
-terraform plan
-terraform apply -auto-approve
-
-terraform destroy -auto-approve
-```
-
-![pic](./docs/image/workspace_dev.png)
-
----
-
-### Prod Workspace
-
-- Create prod workspace
-
-```sh
-# create workspace
 terraform workspace new prod
-# Created and switched to workspace "prod"!
 
-# You're now on a new, empty workspace. Workspaces isolate their state,
-# so if you run "terraform plan" Terraform will not see any existing state
-# for this configuration.
-
-terraform workspace list
-#   default
-#   dev
-# * prod
-
-
-terraform workspace show
-# prod
-```
-
-- Apply
-
-```sh
-terraform fmt && terraform validate
-terraform plan
+# switch and apply
+terraform workspace select dev
 terraform apply -auto-approve
 
-terraform destroy -auto-approve
+terraform workspace select prod
+terraform apply -auto-approve
 ```
 
-![pic](./docs/image/workspace_prod.png)
+## Screenshots
 
----
+Dev workspace
 
-## Key Code
+![dev](./docs/image/workspace_dev.png)
 
-```terraform
-resource "aws_instance" "app" {
-  count = terraform.workspace == "prod" ? 3 : 1
+Prod workspace
 
-  ami           = var.ami_id
-  instance_type = terraform.workspace == "prod" ? "t2.large" : "t2.micro"
-  subnet_id     = aws_subnet.private.id
-}
-```
+![prod](./docs/image/workspace_prod.png)
 
-- workspace in state
+State isolation
 
-![pic](./docs/image/workspace_state.png)
+![state](./docs/image/workspace_state.png)
