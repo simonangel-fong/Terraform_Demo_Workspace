@@ -1,7 +1,13 @@
 variable "project_name" {
-  description = ""
+  description = "Project name"
   type        = string
   default     = "demo-tf-workspace"
+}
+
+variable "aws_region" {
+  description = "AWS region"
+  type        = string
+  default     = "ca-central-1"
 }
 
 variable "ami_id" {

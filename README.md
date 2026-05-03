@@ -38,7 +38,7 @@ resource "aws_instance" "app" {
 
 ```sh
 cd infra
-terraform init
+terraform init -backend-config=backend.config -migrate-state
 terraform workspace new dev
 terraform workspace new prod
 
@@ -62,4 +62,10 @@ Prod workspace
 
 State isolation
 
-![state](./docs/image/workspace_state.png)
+- Local
+
+  ![state](./docs/image/workspace_state.png)
+
+- S3 Remote
+
+  ![remote](./docs/image/workspace_state_remote.png)

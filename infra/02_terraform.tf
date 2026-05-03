@@ -6,9 +6,16 @@ terraform {
     }
   }
 
-  backend "local" {}
+  backend "s3" {
+    bucket               = ""
+    region               = ""
+    workspace_key_prefix = "tf-demo-workspace"
+    key                  = "terraform.tfstate"
+    encrypt              = true
+    use_lockfile         = true
+  }
 }
 
 provider "aws" {
-  region = "ca-central-1"
+  region = var.aws_region
 }
